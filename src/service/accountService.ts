@@ -104,8 +104,7 @@ class AccountService {
       `);
 
       const [rows] = await connection.getQuery(`SELECT LAST_INSERT_ID() as id;`);
-      const insertedId = rows[0].id;
-
+      const insertedId = rows.id;
       await connection.getQuery(`
         INSERT INTO player (account_id, name) VALUES (${insertedId}, '${name}');
       `);
@@ -114,6 +113,7 @@ class AccountService {
       return true;
     } catch (error) {
       await connection.rollback();
+      console.log(error);
       return false;
     }
   }

@@ -13,7 +13,9 @@ const accountController = {
 
     if (result) return res.status(401).json(createErrorResponse(-2, 'Name Already exists.'));
 
-    return res.status(401).json(createErrorResponse(-3, 'Invalid Name'));
+    const create = await accountService.createAccount(name, password);
+    if (create) return res.status(200).json({ success: true });
+    return res.status(401).json(createErrorResponse(-3, 'Internal Server Error'));
   },
 
   // Signin
@@ -22,12 +24,11 @@ const accountController = {
     if (!name || !password) return res.status(401).json(createErrorResponse(-1, 'Invalid Access'));
 
     const accountId = await accountService.getAccountByAccountNameNPassword(name, password);
-
     if (accountId == -1) return res.status(401).json(createErrorResponse(-3, 'Invalid Name'));
-    else if (accountId != 1) return res.status(401).json(createErrorResponse(-2, 'Invalid Password'));
+    else if (accountId == -2) return res.status(401).json(createErrorResponse(-2, 'Invalid Password'));
 
     const accountNPlayer = await accountService.getAccountNPlayerByAccountId(accountId);
-    
+
     return res.status(200).json(accountNPlayer);
   }
 };

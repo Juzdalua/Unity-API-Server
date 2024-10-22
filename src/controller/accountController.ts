@@ -7,25 +7,25 @@ const accountController = {
   // Signup
   signup: async (req: Request<{}, {}, AccountDTO>, res: Response, next: NextFunction): Promise<any> => {
     const { name, password } = req.body;
-    if (!name || !password) return res.status(401).json(createErrorResponse(-1, 'Invalid Access'));
+    if (!name || !password) return res.status(400).json(createErrorResponse(-1, 'Invalid Access'));
 
     const result = await accountService.getAccountByAccountName(name);
 
-    if (result) return res.status(401).json(createErrorResponse(-2, 'Name Already exists.'));
+    if (result) return res.status(400).json(createErrorResponse(-2, 'Name Already exists.'));
 
     const create = await accountService.createAccount(name, password);
     if (create) return res.status(200).json({ success: true });
-    return res.status(401).json(createErrorResponse(-3, 'Internal Server Error'));
+    return res.status(400).json(createErrorResponse(-3, 'Internal Server Error'));
   },
 
   // Signin
   signin: async (req: Request<{}, {}, AccountDTO>, res: Response, next: NextFunction): Promise<any> => {
     const { name, password } = req.body;
-    if (!name || !password) return res.status(401).json(createErrorResponse(-1, 'Invalid Access'));
+    if (!name || !password) return res.status(400).json(createErrorResponse(-4, 'Invalid Access'));
 
     const accountId = await accountService.getAccountByAccountNameNPassword(name, password);
-    if (accountId == -1) return res.status(401).json(createErrorResponse(-3, 'Invalid Name'));
-    else if (accountId == -2) return res.status(401).json(createErrorResponse(-2, 'Invalid Password'));
+    if (accountId == -1) return res.status(400).json(createErrorResponse(-5, 'Invalid Name'));
+    else if (accountId == -2) return res.status(400).json(createErrorResponse(-6, 'Invalid Password'));
 
     const accountNPlayer = await accountService.getAccountNPlayerByAccountId(accountId);
 

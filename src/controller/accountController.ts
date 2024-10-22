@@ -21,15 +21,14 @@ const accountController = {
     const { name, password } = req.body;
     if (!name || !password) return res.status(401).json(createErrorResponse(-1, 'Invalid Access'));
 
-    const result = await accountService.getAccountByAccountNameNPassword(name, password);
+    const accountId = await accountService.getAccountByAccountNameNPassword(name, password);
 
-    if (result != -1) {
-      if (result == 1) return res.status(200).json({
-        accountId: result
-      });
-      else return res.status(401).json(createErrorResponse(-2, 'Invalid Password'));
-    }
-    return res.status(401).json(createErrorResponse(-3, 'Invalid Name'));
+    if (accountId == -1) return res.status(401).json(createErrorResponse(-3, 'Invalid Name'));
+    else if (accountId != 1) return res.status(401).json(createErrorResponse(-2, 'Invalid Password'));
+
+    const accountNPlayer = await accountService.getAccountNPlayerByAccountId(accountId);
+    
+    return res.status(200).json(accountNPlayer);
   }
 };
 

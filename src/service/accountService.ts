@@ -46,8 +46,33 @@ class AccountService {
     return result.length > 0 ? result[0] : null;
   }
 
-  async getAccountNPlayerByName(name: string) {
-    return await connection.getQuery(`
+  async getAccountNPlayerByAccountId(accountId: number): Promise<AccountNPlayer | null> {
+    const result = await connection.getQuery(`
+      SELECT
+          account.id as accountId,
+          account.name,
+          -- account.password as password,
+          NULL as password,
+          player.id as playerId,
+          player.name as playerName,
+          player.posX,
+          player.posY,
+          player.maxHP,
+          player.currentHP 
+      FROM 
+          account
+      LEFT JOIN
+          player 
+      ON
+          account.id = player.account_id
+      WHERE 
+          account.id = ${accountId};    
+    `);
+    return result.length > 0 ? result[0] : null;
+  }
+
+  async getAccountNPlayerByName(name: string): Promise<AccountNPlayer | null> {
+    const result = await connection.getQuery(`
       SELECT
           account.id as accountId,
           account.name,
@@ -67,6 +92,7 @@ class AccountService {
       WHERE 
           account.name = '${name}';    
     `);
+    return result.length > 0 ? result[0] : null;
   }
 
   async createAccount(name: string, password: string): Promise<Boolean> {
@@ -103,12 +129,10 @@ class AccountService {
           name = '${name}' 
     `);
 
-    if(result.length == 0)
-        return -1;
-    if(result.length > 0 && result[0].password == 1)
-        return result[0].accountId;
+    if (result.length == 0) return -1;
+    if (result.length > 0 && result[0].password == 1) return result[0].accountId;
     return -2;
   }
 }
 
-export default new AccountService(); 
+export default new AccountService();

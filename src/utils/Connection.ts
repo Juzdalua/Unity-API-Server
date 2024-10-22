@@ -1,5 +1,5 @@
-import mysql, { QueryResult } from "mysql2/promise";
-import "dotenv/config";
+import mysql, { QueryResult } from 'mysql2/promise';
+import 'dotenv/config';
 
 class Connection {
   host: string = process.env.DATABASE_HOST as string;
@@ -16,7 +16,7 @@ class Connection {
         host: process.env.DATABASE_HOST,
         user: process.env.DATABASE_USER,
         password: process.env.DATABASE_PASSWORD,
-        database: process.env.DATABASE_DB,
+        database: process.env.DATABASE_DB
       });
       console.log(`🚀 DB Connect Success. ✅`);
     } catch (error) {
@@ -32,6 +32,18 @@ class Connection {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async beginTransaction() {
+    await this.instance.beginTransaction();
+  }
+
+  async commit() {
+    await this.instance.commit();
+  }
+
+  async rollback() {
+    await this.instance.rollback();
   }
 
   async endConnection() {

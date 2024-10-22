@@ -1,4 +1,4 @@
-import Connection from "./Connection";
+import Connection from './Connection';
 
 const connection = new Connection();
 export default connection;

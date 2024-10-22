@@ -1,7 +1,8 @@
-import express, { Request, Response } from "express";
-import "dotenv/config";
-import { rootRouter } from "./router/rootRouter";
-import connection from "./utils/database";
+import express, { Request, Response } from 'express';
+import 'dotenv/config';
+import connection from './utils/database';
+import { rootRouter } from './router/rootRouter';
+import { accountRouter } from './router/accountRouter';
 
 const mainAPI = async () => {
   const app = express();
@@ -9,7 +10,11 @@ const mainAPI = async () => {
   const conn = connection;
   await conn.getConnection();
 
-  app.use("/", rootRouter);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+
+  app.use('/', rootRouter);
+  app.use('/account', accountRouter);
 
   app.listen(PORT, () => {
     console.log(`🚀 Connect PORT: ${PORT}. ✅`);
